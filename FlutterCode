@@ -1,0 +1,141 @@
+import 'dart:async';
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: TimerStopwatchApp(),
+    );
+  }
+}
+
+class TimerStopwatchApp extends StatefulWidget {
+  @override
+  _TimerStopwatchAppState createState() => _TimerStopwatchAppState();
+}
+
+class _TimerStopwatchAppState extends State<TimerStopwatchApp> {
+  bool isRunning = false;
+  int seconds = 0;
+  late Stopwatch _stopwatch;
+
+  @override
+  void initState() {
+    super.initState();
+    _stopwatch = Stopwatch();
+  }
+
+  void startTimer() {
+    _stopwatch.start();
+    Timer.periodic(Duration(seconds: 1), (timer) {
+      if (_stopwatch.isRunning) {
+        setState(() {
+          seconds = _stopwatch.elapsed.inSeconds;
+        });
+      } else {
+        timer.cancel();
+      }
+    });
+  }
+
+  void stopTimer() {
+    _stopwatch.stop();
+  }
+
+  void resetTimer() {
+    _stopwatch.reset();
+    setState(() {
+      seconds = 0;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Timer & Stopwatch"),
+        backgroundColor: Colors.blue,
+      ),
+      body: Container(
+        color: Colors.grey[200], // Background color
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: EdgeInsets.all(20.0),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(15.0),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      spreadRadius: 2,
+                      blurRadius: 5,
+                      offset: Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: Text(
+                  'Timer: $seconds seconds',
+                  style: TextStyle(fontSize: 20),
+                ),
+              ),
+              SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        isRunning = true;
+                      });
+                      startTimer();
+                    },
+                    child: Text('Start'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        isRunning = false;
+                      });
+                      stopTimer();
+                    },
+                    child: Text('Stop'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      resetTimer();
+                    },
+                    child: Text('Reset'),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+      bottomNavigationBar: BottomAppBar(
+        color: Colors.blue,
+        child: Container(
+          height: 50.0,
+          child: Center(
+            child: Text(
+              'It is made by Jawwad Ahmed',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
